@@ -19,7 +19,7 @@ class PartnerController extends Controller
      * Display all partners
      */
     public function index() {
-        $partners = Partner::all();
+        $partners = Partner::all(['id', 'name', 'description']);
         return \response()->json([
             'partners' => $partners
         ]);
@@ -44,9 +44,8 @@ class PartnerController extends Controller
     /**
      * Display the specified partner.
      */
-    public function show(Partner $partner): Response
-    {
-        //
+    public function show(Partner $partner) {
+        return Partner::with('items')->find($partner);
     }
 
     /**
