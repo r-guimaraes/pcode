@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('partners', function (Blueprint $table) {
+        Schema::create('orders_items', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description')->nullable(true);
-            $table->string('uri');
-            $table->string('exchange_type');
+            $table->integer('quantity');
+            $table->foreignIdFor(\App\Models\Order::class);
+            $table->foreignIdFor(\App\Models\Item::class);
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('partners');
+        Schema::dropIfExists('orders_items');
     }
 };
