@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
+    /**
+     * @var \Carbon\Carbon|mixed
+     */
+//    public mixed $delivery_date;
+//    public mixed $customer_name;
+    protected $fillable = [
+        'status',
+    ];
+
     use HasFactory;
 
     public function partner(): BelongsTo
