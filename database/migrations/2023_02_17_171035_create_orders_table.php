@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->set('status', ['created', 'errored', 'ingested', 'relayed']);
-            $table->dateTime('received_at')->nullable();
-            $table->dateTime('delivered_at')->nullable();
+            $table->dateTime('ingested_at')->nullable();
+            $table->dateTime('relayed_at')->nullable();
             $table->date('delivery_date');
             $table->string('customer_name');
+            $table->string('origin_order_id');
             $table->text('shipping_address');
             $table->foreignIdFor(\App\Models\Partner::class);
             $table->timestamps();

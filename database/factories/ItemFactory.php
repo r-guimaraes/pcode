@@ -19,6 +19,7 @@ class ItemFactory extends Factory
     {
         return [
             'name' => fake()->name,
+            'internal_id' => fake()->uuid,
             'external_id' => fake()->uuid,
             'partner_id' => Partner::all()->random()->id
         ];

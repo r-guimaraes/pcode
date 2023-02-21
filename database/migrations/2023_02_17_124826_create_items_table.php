@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('internal_id');
             $table->string('external_id');
             $table->foreignIdFor(\App\Models\Partner::class);
             $table->timestamps();

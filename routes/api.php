@@ -23,5 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group( function() {
     Route::apiResource('partners', PartnerController::class);
     Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/{order}', [OrderController::class, 'show']);
     Route::post('orders', [OrderController::class, 'store']);
 });
