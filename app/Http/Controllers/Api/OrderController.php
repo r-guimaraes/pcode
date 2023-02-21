@@ -64,7 +64,6 @@ class OrderController extends Controller
                         $oitm->item_id = $itm->id;
                     }
                 }
-
                 $order->order_items()->save($oitm);
             }
 
@@ -81,7 +80,7 @@ class OrderController extends Controller
      * Display the specified resource.
      */
     public function show(Order $order) {
-        return $order;
+        return Order::with('items', 'order_items')->find($order->id);
     }
 
     private function relay(Order $order) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Item;
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class DispatchController
@@ -17,9 +18,11 @@ class DispatchController
                 array_push($items, $i);
             }
         }
+
+        $formatted_date = Carbon::createFromFormat('Y-m-d', $order->delivery_date)->format('m-d-Y');
         $res = [
             "Orders" => [[
-                "deliveryDate" => "05-23-2023",
+                "deliveryDate" => $formatted_date,
                 "Address" => $order->shipping_address,
                 "customer" => $order->customer_name,
                 "Items" => $items

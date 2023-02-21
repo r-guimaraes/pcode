@@ -45,7 +45,7 @@ class PartnerController extends Controller
      * Display the specified partner.
      */
     public function show(Partner $partner) {
-        return Partner::with('items')->find($partner);
+        return Partner::with('items')->find($partner->id);
     }
 
     /**
