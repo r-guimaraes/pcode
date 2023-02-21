@@ -17,7 +17,7 @@ class PartnerFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name,
+            'name' => fake()->company,
             'description' => fake()->text(250),
             'uri' => fake()->url,
             'exchange_type' => fake()->randomElement(['API', 'CSV', 'FILE'])
