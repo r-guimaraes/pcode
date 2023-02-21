@@ -2,24 +2,28 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Order extends Model
 {
-    /**
-     * @var \Carbon\Carbon|mixed
-     */
-//    public mixed $delivery_date;
-//    public mixed $customer_name;
+    use HasFactory;
+
     protected $fillable = [
         'status',
     ];
 
-    use HasFactory;
+    protected function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s')
+        );
+    }
 
     public function partner(): BelongsTo
     {

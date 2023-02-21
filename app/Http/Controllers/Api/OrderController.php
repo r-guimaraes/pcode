@@ -20,8 +20,10 @@ class OrderController extends Controller
      */
     public function index(): \Illuminate\Http\JsonResponse
     {
+        $orders = Order::all('id','created_at', 'status', 'origin_order_id');
         return response()->json([
-            'orders' => Order::all()
+            'total' => $orders->count(),
+            'orders' => $orders
         ]);
     }
 
@@ -72,14 +74,13 @@ class OrderController extends Controller
             ]);
         }
 
-        return \response()->json([ 'error' => true, 500 ]);;
+        return \response()->json([ 'error' => true, 500 ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
-    {
+    public function show(Order $order) {
         return $order;
     }
 
