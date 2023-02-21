@@ -12,6 +12,8 @@ class Item extends Model
 
     protected $fillable = [
         'name',
+        'internal_id',
+        'partner_id',
         'external_id',
     ];
 
