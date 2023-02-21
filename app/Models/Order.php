@@ -18,6 +18,8 @@ class Order extends Model
         'status',
     ];
 
+    protected $hidden = ['ingested_at', 'origin_order_id'];
+
     protected function createdAt(): Attribute
     {
         return Attribute::make(
