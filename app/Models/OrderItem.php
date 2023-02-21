@@ -16,11 +16,11 @@ class OrderItem extends Model
 
     public function item(): HasOne
     {
-        return $this->hasOne(Item::class);
+        return $this->hasOne(Item::class, 'id');
     }
 
     public function order(): HasOne
     {
-        return $this->hasOne(Order::class);
+        return $this->hasOne(Order::class, 'id');
     }
 }

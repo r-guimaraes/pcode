@@ -44,9 +44,10 @@ class OrderController extends Controller
             'items' => 'required',
         ]);
         $order = new Order(['status' => 'created']);
-
+        $order->ingested_at = Carbon::now();
         $date = Carbon::createFromFormat('d-m-Y', $validated['delivery_date'])->format('Y-m-d');
         $order->delivery_date = $date;
+        $order->origin_order_id = $validated['id'];
         $order->customer_name = $validated['customer'];
         $order->shipping_address = $validated['address'];
         $order->partner_id = $validated['partner_id'];
@@ -62,7 +63,7 @@ class OrderController extends Controller
 
         # $order->save();
 
-        return $order;
+        return 'ok';
     }
 
     /**
@@ -70,30 +71,6 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        return Order::with('order_items')->find($order);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order): Response
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order): RedirectResponse
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order): RedirectResponse
-    {
-        //
+        return $order;
     }
 }
