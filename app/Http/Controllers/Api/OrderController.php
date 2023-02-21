@@ -83,31 +83,21 @@ class OrderController extends Controller
     }
 
     private function relay(Order $order) {
-        $items = [];
-        foreach ($order->order_items as $oitem) {
-            $item = Item::find($oitem->item_id);
-            if ($item) {
-                $i = ["orderqty" => $oitem->quantity, "itemid" => $item->external_id];
-                array_push($items, $i);
-            }
+        dump($order->partner->name);
+        dump($order->partner->uri);
+        dump($order->partner->exchange_type);
+        $obj = [];
+        switch ($order->partner->exchange_type) {
+            case 'API':
+                $obj = DispatchController::postToAPI($order);
+                break;
+            case 'CSV':
+                break;
+            default:
+                return 'Not Implemented Exception';
         }
-        $obj = [
-            "Orders" => [[
-                "deliveryDate" => "05-23-2023",
-                "Address" => $order->shipping_address,
-                "customer" => $order->customer_name,
-                "Items" => $items
-            ],]
-        ];
-        $response = Http::post("https://morsumpartner.free.beeceptor.com/api/v1/orders", json_encode($obj));
-        if ($response->ok() && $response->body()) {
-            $order->status = 'ingested';
-            $order->save();
-        } else {
-            dump("Something went wrong!!");
-            $order->status = 'errored';
-            $order->save();
-        }
+        return;
+
         return $obj;
     }
 }
