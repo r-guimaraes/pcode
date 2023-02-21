@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
+use Nette\NotImplementedException;
 
 class OrderController extends Controller
 {
@@ -50,15 +51,12 @@ class OrderController extends Controller
         $order->partner_id = $validated['partner_id'];
         $id = $order->save();
         foreach ($validated['items'] as $item) {
-            $oitm = new OrderItem;
-            $oitm->order_id = $id;
-            $oitm->quantity = $item['qty'];
-
-            if (Item::where('internal_id', $item["origin_id"])->exists()) {
-                $itm = Item::where('internal_id', $item["origin_id"])->first();
+            $oitm = new OrderItem(['quantity' => $item['qty']]);
+            if (Item::where(['internal_id' => $item["origin_id"], 'partner_id' => $validated['partner_id']])->exists()) {
+                $itm = Item::where(['internal_id' => $item["origin_id"], 'partner_id' => $validated['partner_id']])->first();
                 $oitm->item_id = $itm->id;
             } else {
-                $itm = Item::create(['name' => 'New Item', 'internal_id' => $item["origin_id"], 'external_id' => $item["external_id"], 'partner_id' => $validated['partner_id'] ]);
+                $itm = Item::create(['name' => "New Item from Order", 'internal_id' => $item["origin_id"], 'external_id' => $item["external_id"], 'partner_id' => $validated['partner_id'] ]);
                 if ($itm) {
                     $oitm->item_id = $itm->id;
                 }
@@ -83,9 +81,6 @@ class OrderController extends Controller
     }
 
     private function relay(Order $order) {
-        dump($order->partner->name);
-        dump($order->partner->uri);
-        dump($order->partner->exchange_type);
         $obj = [];
         switch ($order->partner->exchange_type) {
             case 'API':
@@ -94,9 +89,8 @@ class OrderController extends Controller
             case 'CSV':
                 break;
             default:
-                return 'Not Implemented Exception';
+                throw new NotImplementedException("Come back later!");
         }
-        return;
 
         return $obj;
     }
