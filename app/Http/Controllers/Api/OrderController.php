@@ -49,27 +49,30 @@ class OrderController extends Controller
         $order->customer_name = $validated['customer'];
         $order->shipping_address = $validated['address'];
         $order->partner_id = $validated['partner_id'];
-        $id = $order->save();
-        foreach ($validated['items'] as $item) {
-            $oitm = new OrderItem(['quantity' => $item['qty']]);
-            if (Item::where(['internal_id' => $item["origin_id"], 'partner_id' => $validated['partner_id']])->exists()) {
-                $itm = Item::where(['internal_id' => $item["origin_id"], 'partner_id' => $validated['partner_id']])->first();
-                $oitm->item_id = $itm->id;
-            } else {
-                $itm = Item::create(['name' => "New Item from Order", 'internal_id' => $item["origin_id"], 'external_id' => $item["external_id"], 'partner_id' => $validated['partner_id'] ]);
-                if ($itm) {
+        $saved = $order->save();
+        if ($saved) {
+            foreach ($validated['items'] as $item) {
+                $oitm = new OrderItem(['quantity' => $item['qty']]);
+                if (Item::where(['internal_id' => $item["origin_id"], 'partner_id' => $validated['partner_id']])->exists()) {
+                    $itm = Item::where(['internal_id' => $item["origin_id"], 'partner_id' => $validated['partner_id']])->first();
                     $oitm->item_id = $itm->id;
+                } else {
+                    $itm = Item::create(['name' => "New Item from Order", 'internal_id' => $item["origin_id"], 'external_id' => $item["external_id"], 'partner_id' => $validated['partner_id'] ]);
+                    if ($itm) {
+                        $oitm->item_id = $itm->id;
+                    }
                 }
+
+                $order->order_items()->save($oitm);
             }
 
-            $order->order_items()->save($oitm);
+            $order->ingested_at = Carbon::now();
+            return \response()->json([
+                'result' => $this->relay($order)
+            ]);
         }
 
-        $order->ingested_at = Carbon::now();
-
-        # $this->relay($order);
-
-        return $this->relay($order);
+        return \response()->json([ 'error' => true, 500 ]);;
     }
 
     /**

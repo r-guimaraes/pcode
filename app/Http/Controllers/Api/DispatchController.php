@@ -17,7 +17,7 @@ class DispatchController
                 array_push($items, $i);
             }
         }
-        $obj = [
+        $res = [
             "Orders" => [[
                 "deliveryDate" => "05-23-2023",
                 "Address" => $order->shipping_address,
@@ -26,18 +26,17 @@ class DispatchController
             ],]
         ];
 
-        $URL = "https://morsumpartner.free.beeceptor.com/api/v1/orders";
         # $URL = $order->partner->uri;
-        dump("Posting to ${URL}");
-        $response = Http::post($URL, json_encode($obj));
+        $URL = "https://morsumpartner.free.beeceptor.com/api/v1/orders";
+        $response = Http::post($URL, json_encode($res));
         if ($response->ok() && $response->body()) {
             $order->status = 'ingested';
             $order->save();
         } else {
-            dump("Something went wrong!!");
             $order->status = 'errored';
             $order->save();
+            $res = ["error" => $response->reason()];
         }
-        return $obj;
+        return $res;
     }
 }
