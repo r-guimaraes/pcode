@@ -17,6 +17,11 @@ class RelayController
         $casted_date = (string) $order->delivery_date;
         $res = $api_format->formatBody($casted_date, $order->shipping_address, $order->customer_name, $items);
 
+        /*
+        * API endpoint is hard coded here for testing purposes
+        * This is a MOCK API that actually expects data at this path
+        * But each partner may specify its own API endpoint
+        * */
         # $URL = $order->partner->uri;
         $URL = "https://morsumpartner.free.beeceptor.com/api/v1/orders";
         $response = Http::post($URL, json_encode($res));
@@ -41,8 +46,15 @@ class RelayController
         $items = OrderItemController::getItems($order->order_items);
         $res = $csv_format->formatBody((string) $order->delivery_date, $order->shipping_address, $order->customer_name, $items);
 
-        $partner_bash_path = $order->partner->uri;
+        /*
+         * SFTP server path is hard coded here for testing purposes
+         * But each partner may specify its own path to send to
+         * */
+        // $partner_bash_path = $order->partner->uri;
         $partner_bash_path = "Orders";
+        /*
+         * Sent filename could be a better naming with current datetime, for example, and not only 'order.csv'
+         * */
         $uploaded = Storage::disk('sftp')->put("${partner_bash_path}/order.csv", $res);
 
         if ($uploaded) {

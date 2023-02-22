@@ -20,6 +20,10 @@ class OrderController extends Controller
      */
     public function index(): \Illuminate\Http\JsonResponse
     {
+        /*
+         * Returns only a few fields from all orders listings for performance matters
+         * Besides, could be implemented validations
+         * */
         $orders = Order::all('id','created_at', 'status', 'origin_order_id');
         return response()->json([
             'total' => $orders->count(),
@@ -32,6 +36,11 @@ class OrderController extends Controller
      */
     public function store(Request $request) #RedirectResponse
     {
+
+        /*
+         * Incoming data should be better and properly validated before usage,
+         * but works for this example app
+         * */
         $validated = $request->validate([
             'delivery_date' => 'required',
             'address' => 'required',
@@ -84,6 +93,9 @@ class OrderController extends Controller
     }
 
     private function relay(Order $order) {
+        /*
+         * A background job would start here to relay orders
+         * */
         $obj = [];
         switch ($order->partner->exchange_type) {
             case 'API':

@@ -43,6 +43,9 @@ SFTP_ROOT=
 
 * These variables are also available at the bottom of `.env.example` file.
 
+The endpoint `https://morsumpartner.free.beeceptor.com/api/v1/orders` is a MOCK API listening to POST request like
+Partner#1 spec.
+
 ### Summary
 This service receives e-commerce orders through an endpoint, based on previously-known data spec,
 saves it internally, and then prepares ingested data to be relayed to different kinds of integrations.
