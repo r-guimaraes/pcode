@@ -1,5 +1,5 @@
 ## Important Notes
-This example app does not deal with user registration/authentication. For this reason, there's no need to register before
+This example service does not deal with user registration/authentication. For this reason, there's no need to register before
 sending requests, neither deal with credentials/authenticate tokens.
 
 But in a real world scenario, this would be primarily necessary.
@@ -14,12 +14,17 @@ App made with Laravel Sail, so make sure to have Docker and Docker-compose up an
 
 There are some seed files that can be run during the first migration to make it easier to manually test.
 
+By running the seeds, 10 partners will be created, randomly set with either CSV or API exchange type - which are implemented, or FILE exchange type,
+to show it's not yet implemented - but easy to extand.
+
 ### API SPEC
 For the sake of testing and convention, please send the test address exactly with the spec format:
 ``
 "1273 NW Bobcate Lane, St. Robert, MO - 655584-5678", or
 "[number street name], [city], [state] - [postal code]"
 ``
+
+Expected address format are also included at formatters tests.
 
 Developers integrating with this service are supposed to send a POST request to `${base_url}/api/v1/orders`, with the following spec:
 
@@ -77,4 +82,5 @@ considered done for that order.
 
 In a real world scenario, orders would be relayed through a background job, but not the case for this example app.
 
-Also, incoming data would have a proper validation, especially for addresses existence/format, valid partner id, and valid order items data. 
+Also, incoming data would have a proper validation, especially for addresses existence/format, valid partner id, 
+and valid order items data. 
