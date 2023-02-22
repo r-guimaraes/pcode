@@ -7,7 +7,7 @@ use App\Models\Item;
 use App\Models\Order;
 use Illuminate\Support\Facades\Http;
 
-class DispatchController
+class RelayController
 {
     static function postToAPI(Order $order) {
         $items = [];

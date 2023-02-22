@@ -80,16 +80,17 @@ class OrderController extends Controller
      * Display the specified resource.
      */
     public function show(Order $order) {
-        return Order::with('items', 'order_items')->find($order->id);
+        return Order::with('order_items')->find($order->id);
     }
 
     private function relay(Order $order) {
         $obj = [];
         switch ($order->partner->exchange_type) {
             case 'API':
-                $obj = DispatchController::postToAPI($order);
+                $obj = RelayController::postToAPI($order);
                 break;
             case 'CSV':
+                $obj = RelayController::sendCSV($order);
                 break;
             default:
                 throw new NotImplementedException("Come back later!");
