@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\Formatters\API;
 use App\Http\Controllers\Api\Formatters\CSV;
-use App\Models\Item;
 use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class RelayController
 {
@@ -36,6 +36,17 @@ class RelayController
         $csv_format = new CSV();
         $items = OrderItemController::getItems($order->order_items);
         $res = $csv_format->formatBody((string) $order->delivery_date, $order->shipping_address, $order->customer_name, $items);
+
+        $created = Storage::disk('local')->put("order.csv", $res);
+        if ($created) {
+            $order->status = 'relayed';
+            $order->relayed_at = Carbon::now();
+            $order->save();
+        } else {
+            $order->status = 'errored';
+            $order->save();
+            $res = ["error" => "Error Generating CSV Order file"];
+        }
         return $res;
     }
 }
