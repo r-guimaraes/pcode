@@ -23,6 +23,9 @@ For the sake of testing and convention, please send the test address exactly wit
 
 Developers integrating with this service are supposed to send a POST request to `${base_url}/api/v1/orders`, with the following spec:
 
+
+![post-orders-request](https://user-images.githubusercontent.com/1596813/220737022-5f44a7e4-ec16-4055-9f99-821eb0692304.png)
+
 ### Available Endpoints
 All endpoints are prefixed with `api/v1`. These are the available ones:
     
