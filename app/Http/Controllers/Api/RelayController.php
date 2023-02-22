@@ -25,6 +25,10 @@ class RelayController
             $order->relayed_at = Carbon::now();
             $order->save();
         } else {
+            /*
+             * Send error to external service and error logs, like Sentry, AirBrake, RollBar, etc
+             * and / or warn someone by e-mail
+             * */
             $order->status = 'errored';
             $order->save();
             $res = ["error" => $response->reason()];
@@ -37,15 +41,22 @@ class RelayController
         $items = OrderItemController::getItems($order->order_items);
         $res = $csv_format->formatBody((string) $order->delivery_date, $order->shipping_address, $order->customer_name, $items);
 
-        $created = Storage::disk('local')->put("order.csv", $res);
-        if ($created) {
+        $partner_bash_path = $order->partner->uri;
+        $partner_bash_path = "Orders";
+        $uploaded = Storage::disk('sftp')->put("${partner_bash_path}/order.csv", $res);
+
+        if ($uploaded) {
             $order->status = 'relayed';
             $order->relayed_at = Carbon::now();
             $order->save();
         } else {
             $order->status = 'errored';
             $order->save();
-            $res = ["error" => "Error Generating CSV Order file"];
+            /*
+             * Send error to external service and error logs, like Sentry, AirBrake, RollBar, etc
+             * and / or warn someone by e-mail
+             * */
+            $res = ["error" => "Error Relaying CSV Order File"];
         }
         return $res;
     }
