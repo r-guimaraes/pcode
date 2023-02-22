@@ -4,6 +4,8 @@ sending requests, neither deal with credentials/authenticate tokens.
 
 But in a real world scenario, this would be primarily necessary.
 
+There are complementary comments about specific details around the codebase.
+
 ### Running
 App made with Laravel Sail, so make sure to have Docker and Docker-compose up and running.
 
@@ -11,6 +13,17 @@ There are some seed files that can be run during the first migration to make it 
 
 ### API SPEC
 Developers integrating with this service are supposed to send a POST request to `${base_url}/api/v1/orders`, with the following spec:
+
+### Available Endpoints
+All endpoints are prefixed with `api/v1`. These are the available ones:
+    
+    * This is the "main" endpoint, to where developers will send orders
+    - POST /orders - Sends an order to be ingested and relayed to external partner
+    - GET /orders - Lists all orders
+    - GET /orders/{order} - Lists a single order
+    - GET /partners/ - Lists all partners
+    - GET /partners/{partner} - Lists a single partner
+
 
 ### Postman
 There's a Postman collection available to make it easier to interact with APIs endpoints,
