@@ -18,7 +18,7 @@ class PartnerControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->product = Partner::factory()->create();
+        $this->partner = Partner::factory()->create();
     }
 
     public function test_listing_all_partners(): void
