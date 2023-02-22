@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\Formatters\API;
+use App\Http\Controllers\Api\Formatters\CSV;
 use App\Models\Item;
 use App\Models\Order;
 use Illuminate\Support\Facades\Http;
@@ -38,6 +39,16 @@ class RelayController
     }
 
     static function sendCSV(Order $order) {
-
+        $items = [];
+        foreach ($order->order_items as $oitem) {
+            $item = Item::find($oitem->item_id);
+            if ($item) {
+                $i = ["orderqty" => $oitem->quantity, "itemid" => $item->external_id];
+                array_push($items, $i);
+            }
+        }
+        $csv_format = new CSV();
+        $res = $csv_format->formatBody((string) $order->delivery_date, $order->shipping_address, $order->customer_name, $items);
+        return $res;
     }
 }
