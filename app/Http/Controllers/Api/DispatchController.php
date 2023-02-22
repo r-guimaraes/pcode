@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Formatters\API;
 use App\Models\Item;
 use App\Models\Order;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class DispatchController
@@ -19,21 +19,15 @@ class DispatchController
             }
         }
 
-        $formatted_date = Carbon::createFromFormat('Y-m-d', $order->delivery_date)->format('m-d-Y');
-        $res = [
-            "Orders" => [[
-                "deliveryDate" => $formatted_date,
-                "Address" => $order->shipping_address,
-                "customer" => $order->customer_name,
-                "Items" => $items
-            ],]
-        ];
+        $api_format = new API();
+        $casted_date = (string) $order->delivery_date;
+        $res = $api_format->formatBody($casted_date, $order->shipping_address, $order->customer_name, $items);
 
         # $URL = $order->partner->uri;
         $URL = "https://morsumpartner.free.beeceptor.com/api/v1/orders";
         $response = Http::post($URL, json_encode($res));
         if ($response->ok() && $response->body()) {
-            $order->status = 'ingested';
+            $order->status = 'relayed';
             $order->save();
         } else {
             $order->status = 'errored';
@@ -41,5 +35,9 @@ class DispatchController
             $res = ["error" => $response->reason()];
         }
         return $res;
+    }
+
+    static function sendCSV(Order $order) {
+
     }
 }
