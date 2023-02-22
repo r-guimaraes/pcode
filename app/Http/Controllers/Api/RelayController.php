@@ -6,21 +6,14 @@ use App\Http\Controllers\Api\Formatters\API;
 use App\Http\Controllers\Api\Formatters\CSV;
 use App\Models\Item;
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class RelayController
 {
     static function postToAPI(Order $order) {
-        $items = [];
-        foreach ($order->order_items as $oitem) {
-            $item = Item::find($oitem->item_id);
-            if ($item) {
-                $i = ["orderqty" => $oitem->quantity, "itemid" => $item->external_id];
-                array_push($items, $i);
-            }
-        }
-
         $api_format = new API();
+        $items = OrderItemController::getItems($order->order_items);
         $casted_date = (string) $order->delivery_date;
         $res = $api_format->formatBody($casted_date, $order->shipping_address, $order->customer_name, $items);
 
@@ -29,6 +22,7 @@ class RelayController
         $response = Http::post($URL, json_encode($res));
         if ($response->ok() && $response->body()) {
             $order->status = 'relayed';
+            $order->relayed_at = Carbon::now();
             $order->save();
         } else {
             $order->status = 'errored';
@@ -39,15 +33,8 @@ class RelayController
     }
 
     static function sendCSV(Order $order) {
-        $items = [];
-        foreach ($order->order_items as $oitem) {
-            $item = Item::find($oitem->item_id);
-            if ($item) {
-                $i = ["orderqty" => $oitem->quantity, "itemid" => $item->external_id];
-                array_push($items, $i);
-            }
-        }
         $csv_format = new CSV();
+        $items = OrderItemController::getItems($order->order_items);
         $res = $csv_format->formatBody((string) $order->delivery_date, $order->shipping_address, $order->customer_name, $items);
         return $res;
     }
