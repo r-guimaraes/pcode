@@ -15,6 +15,12 @@ App made with Laravel Sail, so make sure to have Docker and Docker-compose up an
 There are some seed files that can be run during the first migration to make it easier to manually test.
 
 ### API SPEC
+For the sake of testing and convention, please send the test address exactly with the spec format:
+``
+"1273 NW Bobcate Lane, St. Robert, MO - 655584-5678", or
+"[number street name], [city], [state] [postal code]"
+``
+
 Developers integrating with this service are supposed to send a POST request to `${base_url}/api/v1/orders`, with the following spec:
 
 ### Available Endpoints
