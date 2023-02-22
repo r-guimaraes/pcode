@@ -6,6 +6,9 @@ But in a real world scenario, this would be primarily necessary.
 
 There are complementary comments about specific details around the codebase.
 
+Original order id, item's internal and external ids are saved as strings to be more flexible regarding
+different types of different platforms ids.
+
 ### Running
 App made with Laravel Sail, so make sure to have Docker and Docker-compose up and running.
 
